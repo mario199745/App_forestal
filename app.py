@@ -12,7 +12,7 @@ import streamlit as st
 
 # Permite ejecutar tanto con ``streamlit run`` como con ``AppTest``.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from database import query, table
+from database import DB_PATH, query, table
 
 
 st.set_page_config(
@@ -49,6 +49,13 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+if not DB_PATH.exists():
+    st.error(
+        "No se encontró `App_forestal/data/forestal.db`. "
+        "Incluya este archivo en el repositorio desplegado."
+    )
+    st.stop()
 
 
 @st.cache_data(show_spinner=False)
