@@ -52,7 +52,8 @@ st.markdown(
 if not DB_PATH.exists():
     st.error(
         "No se encontro `App_forestal/data/forestal.db`. "
-        "Ejecute `python scripts/prepare_tara_inia_data.py` con el entorno Conda sigexpert."
+        "Reconstruya la base localmente con `python scripts/prepare_tara_inia_data.py` "
+        "y confirme el archivo SQLite en el repositorio."
     )
     st.stop()
 
