@@ -11,7 +11,9 @@ import plotly.graph_objects as go
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from database import DB_PATH, query, table
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from database import DB_PATH, missing_required_objects, query, table
 
 
 st.set_page_config(
@@ -54,6 +56,32 @@ if not DB_PATH.exists():
         "No se encontro `App_forestal/data/forestal.db`. "
         "Reconstruya la base localmente con `python scripts/prepare_tara_inia_data.py` "
         "y confirme el archivo SQLite en el repositorio."
+    )
+    st.stop()
+
+missing_objects = missing_required_objects()
+if missing_objects:
+    try:
+        from scripts.prepare_tara_inia_data import build_database
+
+        build_database()
+        missing_objects = missing_required_objects()
+    except Exception as exc:
+        st.error(
+            "La base SQLite desplegada no corresponde a la version Tara + INIA. "
+            "Faltan objetos: "
+            + ", ".join(sorted(missing_objects))
+            + ". Reconstruya `App_forestal/data/forestal.db` con "
+            "`python scripts/prepare_tara_inia_data.py` y suba ese archivo a GitHub."
+        )
+        st.exception(exc)
+        st.stop()
+
+if missing_objects:
+    st.error(
+        "La base SQLite desplegada esta desactualizada. Faltan objetos: "
+        + ", ".join(sorted(missing_objects))
+        + ". Reconstruya y suba `App_forestal/data/forestal.db`."
     )
     st.stop()
 
