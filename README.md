@@ -1,48 +1,50 @@
-# Aplicación de evaluación forestal
+# Aplicacion de evaluacion forestal
 
-Tablero Streamlit para explorar producción por árbol, morfología de vainas y
-semillas, y resultados de taninos.
+Tablero Streamlit para explorar informacion Tara e INIA. La version vigente ya
+no consume la fuente de taninos y no incluye la pestana Comparacion.
 
 ## Fuentes
 
-El aplicativo utiliza exclusivamente los libros:
+El aplicativo utiliza:
 
-- `Data_ProduccionArbol_FINAL.xlsx`
-- `Data_MorfotipoMedidas_FINAL.xlsx`
-- `Data_TaninosVainas_FINAL.xlsx`
+- `DATA/Tara/Data_InformacionSitios_FINAL.xlsx`
+- `DATA/Tara/Data_ClimaSitios_FINAL.xlsx`
+- `DATA/Tara/Data_SuelosSitios_FINAL.xlsx`
+- `DATA/INIA/informacion_extraida_INIA_SERFOR.md`
 
-## Ejecución con Conda
+## Ejecucion con Conda
 
-Desde la raíz del proyecto:
+Desde la raiz del proyecto:
 
 ```powershell
-conda activate sigexpert
-python App_forestal/etl/build_database.py
-streamlit run App_forestal/app.py
+& 'C:\Users\USUARIO\miniconda3\Scripts\conda.exe' run -n sigexpert python scripts/prepare_tara_inia_data.py
+& 'C:\Users\USUARIO\miniconda3\Scripts\conda.exe' run -n sigexpert streamlit run App_forestal/app.py
 ```
 
-La base ya generada se encuentra en `App_forestal/data/forestal.db`. Solo es
-necesario reconstruirla cuando cambien los Excel o las reglas del ETL.
+La base generada se encuentra en `App_forestal/data/forestal.db`. Solo es
+necesario reconstruirla cuando cambien los Excel, el Markdown INIA o las reglas
+del ETL.
 
 ## Pruebas
 
 ```powershell
-python -m unittest discover -s App_forestal/tests -v
+& 'C:\Users\USUARIO\miniconda3\Scripts\conda.exe' run -n sigexpert python -m unittest discover -s App_forestal/tests -v
 ```
 
 ## Estructura
 
 ```text
 App_forestal/
-├── .streamlit/config.toml
 ├── app.py
 ├── database.py
 ├── data/forestal.db
 ├── etl/build_database.py
-├── scripts/profile_data.py
 ├── tests/test_app.py
 └── requirements.txt
+
+scripts/
+└── prepare_tara_inia_data.py
 ```
 
-La conexión a SQLite es de solo lectura. Las consultas y la conexión están
-cacheadas por Streamlit. Los filtros vacíos representan todos los valores.
+La conexion a SQLite es de solo lectura. Las consultas y la conexion estan
+cacheadas por Streamlit. Los filtros vacios representan todos los valores.

@@ -26,11 +26,17 @@ def query(sql: str, params: tuple = ()) -> pd.DataFrame:
 
 def table(name: str) -> pd.DataFrame:
     allowed = {
-        "fact_arbol",
-        "fact_morfologia",
-        "fact_tanino_repeticion",
-        "fact_tanino_reporte",
-        "vw_cobertura_dominios",
+        "tara_sitios",
+        "tara_clima",
+        "tara_suelos",
+        "tara_integrada",
+        "inia_resumen",
+        "inia_eea",
+        "inia_lineas",
+        "inia_secciones",
+        "vw_tara_resumen_region",
+        "vw_tara_cobertura",
+        "vw_inia_resumen_departamento",
     }
     if name not in allowed:
         raise ValueError(f"Tabla no permitida: {name}")

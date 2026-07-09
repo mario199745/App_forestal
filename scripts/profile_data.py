@@ -1,4 +1,4 @@
-"""Perfil reproducible de las fuentes Excel del proyecto forestal.
+"""Perfil reproducible de las fuentes Tara del proyecto forestal.
 
 Uso:
     conda run -n sigexpert python App_forestal/scripts/profile_data.py
@@ -19,13 +19,13 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "DATA"
-OUTPUT = ROOT / "DOCS" / "perfil_datos.json"
+TARA_DIR = DATA_DIR / "Tara"
+OUTPUT = ROOT / "DOCS" / "perfil_tara_excel.json"
 
-# Alcance aprobado para la base y el aplicativo.
 SOURCE_FILES = (
-    "Data_ProduccionArbol_FINAL.xlsx",
-    "Data_MorfotipoMedidas_FINAL.xlsx",
-    "Data_TaninosVainas_FINAL.xlsx",
+    "Data_InformacionSitios_FINAL.xlsx",
+    "Data_ClimaSitios_FINAL.xlsx",
+    "Data_SuelosSitios_FINAL.xlsx",
 )
 
 NA_MARKERS = ["", "-", "--", "NA", "N/A", "na", "n/a", "s/d", "S/D"]
@@ -117,11 +117,11 @@ def sheet_profile(frame: pd.DataFrame) -> dict[str, Any]:
 def main() -> None:
     report: dict[str, Any] = {
         "generado": datetime.now().astimezone().isoformat(),
-        "directorio_fuente": str(DATA_DIR),
+        "directorio_fuente": str(TARA_DIR),
         "archivos": {},
     }
     for filename in SOURCE_FILES:
-        workbook = DATA_DIR / filename
+        workbook = TARA_DIR / filename
         if not workbook.exists():
             raise FileNotFoundError(f"No se encontró la fuente requerida: {workbook}")
         excel = pd.ExcelFile(workbook, engine="openpyxl")
