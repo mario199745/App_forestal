@@ -14,10 +14,11 @@ class StreamlitAppTests(unittest.TestCase):
         pages = list(initial.radio[0].options)
         self.assertEqual(
             pages,
-            ["Resumen", "Proyecto Tara Ñan", "INIA", "Metodologia"],
+            ["Resumen", "Proyecto Tara Ñan", "INIA"],
         )
         self.assertNotIn("Taninos", pages)
         self.assertNotIn("Comparacion", pages)
+        self.assertNotIn("Metodologia", pages)
         self.assertNotIn("Tara sitios", pages)
         self.assertNotIn("Tara clima", pages)
         self.assertNotIn("Tara suelos", pages)

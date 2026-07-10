@@ -150,7 +150,7 @@ with st.sidebar:
     st.caption("Tara · INIA")
     page = st.radio(
         "Navegacion",
-        ["Resumen", "Proyecto Tara Ñan", "INIA", "Metodologia"],
+        ["Resumen", "Proyecto Tara Ñan", "INIA"],
         label_visibility="collapsed",
     )
     st.divider()
@@ -189,13 +189,6 @@ def render_summary() -> None:
         summary = apply_filters(table("vw_tara_resumen_region"), {"region": selected_region})
         fig = px.scatter(summary, x="temperatura_media", y="ph_medio", size="sitios", color="region", hover_data=["precipitacion_total_media", "materia_organica_media"], color_discrete_sequence=COLORS, title="Relacion clima-suelo por departamento")
         st.plotly_chart(style_figure(fig), width="stretch")
-
-    st.markdown(
-        '<div class="note">La aplicacion ya no consume informacion de taninos ni presenta una pestana de comparacion. '
-        "El analisis operativo se concentra en Tara e INIA.</div>",
-        unsafe_allow_html=True,
-    )
-
 
 def render_tara_project() -> None:
     hero("Proyecto Tara Ñan", "Informacion integrada de sitios, clima y suelos para la evaluacion territorial de tara.")
@@ -409,43 +402,9 @@ def render_inia() -> None:
     download_button(lineas, "inia_lineas_investigacion.csv")
 
 
-def render_methodology() -> None:
-    hero("Metodologia", "Alcance, trazabilidad y criterios de lectura de la version Tara + INIA.")
-    st.markdown(
-        """
-        ### Fuentes incluidas
-
-        - Tara sitios: `Data_InformacionSitios_FINAL.xlsx`, hoja `Datos-SITIOS`.
-        - Tara clima: `Data_ClimaSitios_FINAL.xlsx`, hoja `Sitio-Clima`.
-        - Tara suelos: `Data_SuelosSitios_FINAL.xlsx`, hoja `Data`.
-        - INIA: `informacion_extraida_INIA_SERFOR.md`.
-
-        ### Criterios de integracion
-
-        Las tablas Tara se normalizan por departamento, manejo y clase diametrica.
-        En la interfaz se presentan en una sola pestaña, `Proyecto Tara Ñan`,
-        organizada internamente en sitios, clima, suelos y datos integrados.
-        Los archivos originales se conservan como tablas independientes para trazabilidad.
-
-        INIA se procesa desde el texto estructurado, extrayendo estaciones,
-        departamentos, lineas de investigacion, especies clave y fichas por EEA
-        cuando estan disponibles.
-
-        ### Cambios de alcance
-
-        La fuente de taninos fue excluida del ETL y de la aplicacion. Tambien se
-        elimino la pestana Comparacion para evitar lecturas cruzadas no solicitadas.
-        """
-    )
-    coverage = table("vw_tara_cobertura")
-    st.dataframe(coverage, width="stretch", hide_index=True)
-    download_button(coverage, "cobertura_tara.csv")
-
-
 renderers = {
     "Resumen": render_summary,
     "Proyecto Tara Ñan": render_tara_project,
     "INIA": render_inia,
-    "Metodologia": render_methodology,
 }
 renderers[page]()
