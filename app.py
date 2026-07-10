@@ -150,7 +150,7 @@ with st.sidebar:
     st.caption("Tara · INIA")
     page = st.radio(
         "Navegacion",
-        ["Resumen", "Tara sitios", "Tara clima", "Tara suelos", "INIA", "Metodologia"],
+        ["Resumen", "Proyecto Tara Ñan", "INIA", "Metodologia"],
         label_visibility="collapsed",
     )
     st.divider()
@@ -197,8 +197,22 @@ def render_summary() -> None:
     )
 
 
-def render_tara_sites() -> None:
-    hero("Tara sitios", "Registro de unidades de evaluacion, productores, ubicacion y practicas de manejo.")
+def render_tara_project() -> None:
+    hero("Proyecto Tara Ñan", "Informacion integrada de sitios, clima y suelos para la evaluacion territorial de tara.")
+    tabs = st.tabs(["Sitios", "Clima", "Suelos", "Datos integrados"])
+    with tabs[0]:
+        render_tara_sites(show_hero=False)
+    with tabs[1]:
+        render_tara_climate(show_hero=False)
+    with tabs[2]:
+        render_tara_soils(show_hero=False)
+    with tabs[3]:
+        render_tara_integrated()
+
+
+def render_tara_sites(show_hero: bool = True) -> None:
+    if show_hero:
+        hero("Tara sitios", "Registro de unidades de evaluacion, productores, ubicacion y practicas de manejo.")
     data = apply_filters(table("tara_sitios"), filters)
     if data.empty:
         empty_state()
@@ -232,8 +246,9 @@ CLIMATE_METRICS = {
 }
 
 
-def render_tara_climate() -> None:
-    hero("Tara clima", "Condiciones climaticas asociadas a las unidades de evaluacion.")
+def render_tara_climate(show_hero: bool = True) -> None:
+    if show_hero:
+        hero("Tara clima", "Condiciones climaticas asociadas a las unidades de evaluacion.")
     data = apply_filters(table("tara_clima"), filters)
     if data.empty:
         empty_state()
@@ -271,8 +286,9 @@ SOIL_METRICS = {
 }
 
 
-def render_tara_soils() -> None:
-    hero("Tara suelos", "Propiedades fisicas y quimicas del suelo para priorizar interpretaciones productivas.")
+def render_tara_soils(show_hero: bool = True) -> None:
+    if show_hero:
+        hero("Tara suelos", "Propiedades fisicas y quimicas del suelo para priorizar interpretaciones productivas.")
     data = apply_filters(table("tara_suelos"), filters)
     if data.empty:
         empty_state()
@@ -296,6 +312,62 @@ def render_tara_soils() -> None:
     visible = ["region", "manejo", "clase", "cod_campo", "clase_text", "ph", "mat_org", "fosforo_disp", "potasio_disp", "arena", "arcilla", "limo"]
     st.dataframe(data[[col for col in visible if col in data]], width="stretch", hide_index=True)
     download_button(data, "tara_suelos_filtrados.csv")
+
+
+def render_tara_integrated() -> None:
+    data = apply_filters(table("tara_integrada"), filters)
+    if data.empty:
+        empty_state()
+
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Registros integrados", f"{len(data):,}")
+    c2.metric("Departamentos", data["region"].nunique())
+    c3.metric("Manejos", data["manejo"].nunique())
+    c4.metric("Clases", data["clase"].nunique())
+
+    left, right = st.columns(2)
+    with left:
+        fig = px.scatter(
+            data,
+            x="tmedia_prom",
+            y="ph",
+            color="region",
+            symbol="manejo",
+            hover_data=["localidad", "clase", "precip_total_mm", "mat_org"],
+            color_discrete_sequence=COLORS,
+            title="Temperatura media y pH del suelo",
+        )
+        st.plotly_chart(style_figure(fig), width="stretch")
+    with right:
+        fig = px.scatter(
+            data,
+            x="altitud",
+            y="precip_total_mm",
+            color="clase",
+            symbol="manejo",
+            hover_data=["region", "localidad", "estacion"],
+            color_discrete_sequence=COLORS,
+            title="Altitud y precipitacion total",
+        )
+        st.plotly_chart(style_figure(fig), width="stretch")
+
+    visible = [
+        "codigo_dei",
+        "region",
+        "provincia",
+        "distrito",
+        "localidad",
+        "manejo",
+        "clase",
+        "altitud",
+        "tmedia_prom",
+        "precip_total_mm",
+        "ph",
+        "mat_org",
+        "clase_text",
+    ]
+    st.dataframe(data[[col for col in visible if col in data]], width="stretch", hide_index=True)
+    download_button(data, "proyecto_tara_nan_integrado.csv")
 
 
 def render_inia() -> None:
@@ -351,8 +423,9 @@ def render_methodology() -> None:
         ### Criterios de integracion
 
         Las tablas Tara se normalizan por departamento, manejo y clase diametrica.
-        La vista integrada se usa para lectura territorial y de priorizacion; los
-        archivos originales se conservan como tablas independientes para trazabilidad.
+        En la interfaz se presentan en una sola pestaña, `Proyecto Tara Ñan`,
+        organizada internamente en sitios, clima, suelos y datos integrados.
+        Los archivos originales se conservan como tablas independientes para trazabilidad.
 
         INIA se procesa desde el texto estructurado, extrayendo estaciones,
         departamentos, lineas de investigacion, especies clave y fichas por EEA
@@ -371,9 +444,7 @@ def render_methodology() -> None:
 
 renderers = {
     "Resumen": render_summary,
-    "Tara sitios": render_tara_sites,
-    "Tara clima": render_tara_climate,
-    "Tara suelos": render_tara_soils,
+    "Proyecto Tara Ñan": render_tara_project,
     "INIA": render_inia,
     "Metodologia": render_methodology,
 }

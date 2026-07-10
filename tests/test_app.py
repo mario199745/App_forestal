@@ -14,10 +14,13 @@ class StreamlitAppTests(unittest.TestCase):
         pages = list(initial.radio[0].options)
         self.assertEqual(
             pages,
-            ["Resumen", "Tara sitios", "Tara clima", "Tara suelos", "INIA", "Metodologia"],
+            ["Resumen", "Proyecto Tara Ñan", "INIA", "Metodologia"],
         )
         self.assertNotIn("Taninos", pages)
         self.assertNotIn("Comparacion", pages)
+        self.assertNotIn("Tara sitios", pages)
+        self.assertNotIn("Tara clima", pages)
+        self.assertNotIn("Tara suelos", pages)
 
         for page in pages:
             app = AppTest.from_file(str(APP), default_timeout=40).run()
@@ -25,12 +28,12 @@ class StreamlitAppTests(unittest.TestCase):
                 app.radio[0].set_value(page).run()
             self.assertFalse(app.exception, f"Error en la seccion {page}")
 
-    def test_tara_climate_has_metrics_and_selector(self):
+    def test_tara_project_has_metrics_and_selectors(self):
         app = AppTest.from_file(str(APP), default_timeout=40).run()
-        app.radio[0].set_value("Tara clima").run()
+        app.radio[0].set_value("Proyecto Tara Ñan").run()
         self.assertFalse(app.exception)
-        self.assertEqual(len(app.metric), 4)
-        self.assertGreaterEqual(len(app.selectbox), 1)
+        self.assertGreaterEqual(len(app.metric), 4)
+        self.assertGreaterEqual(len(app.selectbox), 2)
 
 
 if __name__ == "__main__":

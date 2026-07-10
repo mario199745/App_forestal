@@ -1,7 +1,8 @@
 # Aplicacion de evaluacion forestal
 
-Tablero Streamlit para explorar informacion Tara e INIA. La version vigente ya
-no consume la fuente de taninos y no incluye la pestana Comparacion.
+Tablero Streamlit para explorar informacion Tara e INIA. Tara se presenta en
+una sola pestaña denominada `Proyecto Tara Ñan`. La version vigente ya no
+consume la fuente de taninos y no incluye la pestana Comparacion.
 
 ## Fuentes
 
